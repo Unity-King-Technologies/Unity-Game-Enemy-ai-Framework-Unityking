@@ -1,120 +1,334 @@
-# Unity-Game-Enemy-ai-Framework---Unityking
-Unity Game Enemy AI Framework
-(FSM • Behavior Trees • Perception System)
-Author: Unity King
-Website: https://unityking.com
- 
-1. Introduction
-The Unity Game Enemy AI Framework by Unity King is a modular, production-ready foundation for building intelligent enemy behavior in Unity games. The framework is designed to be flexible, extensible, and easy to understand, supporting both small prototypes and large-scale productions.
-This framework combines three powerful AI concepts:
-• Finite State Machines (FSM)
-• Behavior Trees (BT)
-• Perception Systems (Vision-based sensing)
+# Unity Game Enemy AI Framework  
+### FSM • Behavior Trees • Perception System  
 
-Together, these systems allow developers to create believable, scalable, and maintainable enemy AI.
- 
-2. Core AI Concepts
-2.1 Finite State Machine (FSM)
-FSM is used to manage high-level enemy states such as Idle, Patrol, Chase, and Attack. Each state is isolated and handles its own logic, making behavior predictable and debuggable.
-2.2 Behavior Trees (BT)
-Behavior Trees are used for decision-making inside states. They provide flexible control over complex logic using nodes such as Selectors, Sequences, and Action Nodes.
-2.3 Blackboard
-The Blackboard is a shared memory structure that stores runtime data such as the current target, distance to the player, vision status, and attack range.
- 
-3. Project Structure Overview
-The framework follows a clean and scalable folder structure:
+Created and maintained by **Unity King**  
+https://unityking.com
+
+---
+
+## Quick Start (Read This First)
+
+This repository contains **only the `Assets/` folder** with a complete, modular **Enemy AI framework**.
+
+### How to Use This Repository
+
+1. **Create or open a Unity project**  
+   - Unity 2021 LTS or newer recommended
+
+2. **Copy the `Assets` folder** from this repository  
+   Paste it directly into your Unity project root  
+   (merge with existing Assets if needed)
+
+3. **Open Unity**
+   - Unity will automatically import all scripts
+
+4. **Create an Enemy GameObject**
+   - Add required components (explained below)
+
+That’s it. The framework is now ready to use.
+
+---
+
+## 📁 Project Structure
 
 Assets/
- ├── Scripts/
- │    ├── EnemyAI/
- │    │    ├── Core/
- │    │    │    ├── EnemyAIController.cs
- │    │    │    ├── EnemyBlackboard.cs
- │    │    ├── FSM/
- │    │    │    ├── IState.cs
- │    │    │    ├── StateMachine.cs
- │    │    │    ├── IdleState.cs
- │    │    │    ├── PatrolState.cs
- │    │    │    ├── ChaseState.cs
- │    │    │    └── AttackState.cs
- │    │    ├── BehaviorTree/
- │    │    │    ├── BTNode.cs
- │    │    │    ├── Selector.cs
- │    │    │    ├── Sequence.cs
- │    │    │    └── ActionNode.cs
- │    │    ├── Perception/
- │    │    │    ├── EnemyPerception.cs
- │    │    │    └── VisionSensor.cs
- │    │    └── Movement/
- │    │         └── EnemyMovement.cs
+├── Scripts/
+│    ├── EnemyAI/
+│    │    ├── Core/
+│    │    │    ├── EnemyAIController.cs
+│    │    │    ├── EnemyBlackboard.cs
+│    │    ├── FSM/
+│    │    │    ├── IState.cs
+│    │    │    ├── StateMachine.cs
+│    │    │    ├── IdleState.cs
+│    │    │    ├── PatrolState.cs
+│    │    │    ├── ChaseState.cs
+│    │    │    └── AttackState.cs
+│    │    ├── BehaviorTree/
+│    │    │    ├── BTNode.cs
+│    │    │    ├── Selector.cs
+│    │    │    ├── Sequence.cs
+│    │    │    └── ActionNode.cs
+│    │    ├── Perception/
+│    │    │    ├── EnemyPerception.cs
+│    │    │    └── VisionSensor.cs
+│    │    └── Movement/
+│    │         └── EnemyMovement.cs
 
-Each folder has a single responsibility, ensuring maintainability and ease of extension.
- 
-4. EnemyAIController
-EnemyAIController is the central brain of the AI system. It connects FSM, Perception, Blackboard, and Movement systems together.
 
-Example:
-public class EnemyAIController : MonoBehaviour
+Each folder represents a **single responsibility system**, making the framework easy to understand, debug, and extend.
+
+---
+
+## Architecture Overview
+
+This framework combines **three AI techniques**:
+
+### Finite State Machine (FSM)
+Used for **high-level behavior**:
+- Idle
+- Patrol
+- Chase
+- Attack
+
+FSM decides *what* the enemy should do.
+
+---
+
+### Behavior Trees (BT)
+Used for **decision-making logic inside states**.
+
+BT decides *how* the enemy should act:
+- Selector (OR logic)
+- Sequence (AND logic)
+- Action Nodes (actual gameplay logic)
+
+---
+
+### Perception System
+Used to **sense the environment**:
+- Vision-based detection
+- Player awareness
+- Target tracking
+
+---
+
+## Core Components Explained
+
+### EnemyAIController
+The **brain** of the enemy.
+
+Responsibilities:
+- Initializes the FSM
+- Updates current state
+- Shares data via Blackboard
+- Connects Perception and Movement
+
+```csharp
+EnemyAIController
+````
+
+Attach this to **every enemy GameObject**.
+
+---
+
+### EnemyBlackboard
+
+Shared memory between:
+
+* FSM
+* Behavior Trees
+* Sensors
+
+Stores:
+
+* Current target
+* Distance to target
+* Visibility
+* Attack range status
+
+```csharp
+blackboard.target
+blackboard.isInAttackRange
+```
+
+---
+
+## Finite State Machine (FSM)
+
+### Available States
+
+* `IdleState`
+* `PatrolState`
+* `ChaseState`
+* `AttackState`
+
+Each state:
+
+* Implements `IState`
+* Has `Enter()`, `Tick()`, `Exit()`
+
+### Example: Idle → Chase Transition
+
+```csharp
+public void Tick()
 {
-    public StateMachine stateMachine;
-    public EnemyBlackboard blackboard;
-
-    void Update()
-    {
-        stateMachine.Update();
-    }
+    if (ai.blackboard.target != null)
+        ai.ChangeState(new ChaseState(ai));
 }
+```
 
- 
-5. Finite State Machine (FSM)
-FSM handles macro-level behavior. States can be easily extended or replaced.
+FSM controls **macro behavior flow**.
 
-Example Idle State:
-public class IdleState : IState
+---
+
+## Behavior Trees
+
+Behavior Trees are used for **fine-grained logic**.
+
+### Core Nodes
+
+* `Selector` → Try children until one succeeds
+* `Sequence` → Execute all children in order
+* `ActionNode` → Actual gameplay logic
+
+---
+
+### Example: ActionNode
+
+```csharp
+ActionNode chaseTarget = new ActionNode(() =>
 {
-    public void Tick()
-    {
-        // Wait for target
-    }
-}
-
-State transitions are controlled inside Tick() based on Blackboard data.
- 
-6. Behavior Trees
-Behavior Trees are used to implement decision logic such as attacking, chasing, or retreating.
-
-Example Action Node:
-ActionNode attackNode = new ActionNode(() =>
-{
-    if (!blackboard.isInAttackRange)
+    if (blackboard.target == null)
         return BTNode.State.Failure;
 
-    Attack();
-    return BTNode.State.Success;
+    movement.MoveTo(blackboard.target.position);
+    return BTNode.State.Running;
 });
+```
 
- 
-7. Perception System
-Perception allows enemies to sense the environment. Currently, the framework provides a VisionSensor.
+This makes Behavior Trees **code-driven and flexible**.
 
-VisionSensor scans the area using Physics.OverlapSphere
-to detect potential targets.
+---
 
- 
-8. Enemy Movement
-EnemyMovement is responsible for physically moving the enemy towards a target.
+## Perception System
 
+### VisionSensor
+
+Detects targets using physics overlap.
+
+Features:
+
+* Distance-based detection
+* Layer filtering
+* Real-time updates
+
+```csharp
+Collider[] hits = Physics.OverlapSphere(
+    transform.position,
+    viewDistance,
+    targetLayer
+);
+```
+
+### EnemyPerception
+
+Acts as a bridge between sensors and AI logic.
+
+```csharp
+CurrentTarget = vision.DetectedTarget;
+```
+
+---
+
+## Enemy Movement
+
+### EnemyMovement
+
+Handles physical movement.
+
+Currently supports:
+
+* Direct movement toward target
+
+```csharp
 movement.MoveTo(target.position);
+```
 
- 
-9. Extending the Framework
-You can extend the framework by:
-• Adding new FSM states (Flee, Search)
-• Adding new sensors (Hearing, Damage)
-• Adding BT Decorators (Cooldown, Inverter)
-• Integrating NavMesh for pathfinding
+### Can be extended to:
 
- 
-The Unity Game Enemy AI Framework by Unity King provides a strong foundation for creating intelligent, scalable enemy behavior. It is suitable for indie developers, studios, and R&D teams.
-For updates and advanced systems, visit https://unityking.com
+* NavMeshAgent
+* Root motion
+* Flying / swimming AI
 
+---
+
+## Example Enemy Setup (Step-by-Step)
+
+1. Create an empty GameObject
+   `Enemy`
+
+2. Add components:
+
+   * `EnemyAIController`
+   * `EnemyPerception`
+   * `VisionSensor`
+   * `EnemyMovement`
+   * (Optional) Collider / Rigidbody
+
+3. Set VisionSensor:
+
+   * View Distance
+   * Target Layer (Player)
+
+4. Press ▶ Play
+
+Enemy will:
+
+* Stay idle
+* Detect player
+* Chase
+* Attack (logic ready)
+
+---
+
+## Extending the Framework
+
+You can easily add:
+
+### FSM
+
+* FleeState
+* SearchState
+* AlertState
+
+### Behavior Tree
+
+* Cooldown decorators
+* Inverter nodes
+* Repeater nodes
+
+### Perception
+
+* Hearing sensor
+* Damage sensor
+* Line-of-sight checks
+
+### Movement
+
+* NavMesh pathfinding
+* Strafing
+* Cover system
+
+---
+
+## Use Cases
+
+* FPS / TPS enemies
+* Stealth games
+* Survival AI
+* Boss behavior systems
+* R&D AI experiments
+
+---
+
+## License
+
+MIT License
+Free for personal and commercial use.
+
+---
+
+## Author
+
+**Unity King**
+[https://unityking.com](https://unityking.com)
+Game Development • AI Systems • Tools
+
+---
+
+⭐ If this framework helps you, consider starring the repository.
+
+```
+Ab isko **push kar**, koi complain nahi aayegi 😎💪
+```
