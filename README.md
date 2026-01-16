@@ -30,7 +30,7 @@ That’s it. The framework is now ready to use.
 ---
 
 ## 📁 Project Structure
-
+```YAML
 Assets/
 ├── Scripts/
 │    ├── EnemyAI/
@@ -55,7 +55,7 @@ Assets/
 │    │    └── Movement/
 │    │         └── EnemyMovement.cs
 
-
+```
 Each folder represents a **single responsibility system**, making the framework easy to understand, debug, and extend.
 
 ---
@@ -328,7 +328,3 @@ Game Development • AI Systems • Tools
 ---
 
 ⭐ If this framework helps you, consider starring the repository.
-
-```
-Ab isko **push kar**, koi complain nahi aayegi 😎💪
-```
